@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Música</title>
+    <link rel="stylesheet" href="editar.css">
+</head>
+<body>
+
+    <header>
+        <h1>Editar Música</h1>
+        <a href="index.html">Voltar</a>
+    </header>
+
+    <main>
+        <form id="formEditar">
+
+            <div class="campo">
+                <label for="titulo">Título:</label>
+                <input type="text" id="titulo" required>
+            </div>
+
+            <div class="campo">
+                <label for="artista">Artista:</label>
+                <input type="text" id="artista" required>
+            </div>
+
+            <div class="campo">
+                <label for="genero">Gênero:</label>
+                <input type="text" id="genero" required>
+            </div>
+
+            <div class="campo">
+                <label for="ano">Ano:</label>
+                <input type="number" id="ano" required>
+            </div>
+
+            <div class="campo">
+                <label for="duracao">Duração:</label>
+                <input type="number" id="duracao" required>
+            </div>
+
+            <button type="submit">Salvar alterações</button>
+
+        </form>
+    </main>
+
+    <script src="editar.js"></script>
+</body>
+</html>

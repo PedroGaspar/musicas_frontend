@@ -1,12 +1,29 @@
+
 const urlBackend = "http://localhost:3001";
+
 const listaMusicas = document.getElementById("listaMusicas");
 
 async function buscarMusicas() {
+    if (!listaMusicas) {
+        console.error("Elemento listaMusicas não encontrado no HTML!");
+        return;
+    }
+
     try {
         const resposta = await fetch(urlBackend);
+
+        if (!resposta.ok) {
+            throw new Error("Erro ao buscar músicas no servidor.");
+        }
+
         const musicas = await resposta.json();
 
         listaMusicas.innerHTML = "";
+
+        if (!Array.isArray(musicas) || musicas.length === 0) {
+            listaMusicas.innerHTML = "<p>Nenhuma música cadastrada.</p>";
+            return;
+        }
 
         musicas.forEach((musica) => {
             listaMusicas.innerHTML += `
@@ -17,13 +34,16 @@ async function buscarMusicas() {
                     <p>Ano: ${musica.ano}</p>
                     <p>Duração: ${musica.duracao}</p>
                     <a href="editar.html?id=${musica.id}">Editar</a>
-                    <button class="apagar" onclick="apagarMusica(${musica.id})">Apagar</button>
+                    <button class="apagar" onclick="apagarMusica(${musica.id})">
+                        Apagar
+                    </button>
                 </div>
             `;
         });
+
     } catch (error) {
-        console.log(error);
-        alert("Erro ao buscar músicas!");
+        console.error("Erro:", error);
+        listaMusicas.innerHTML = "<p>Não foi possível carregar as músicas.</p>";
     }
 }
 
@@ -45,8 +65,9 @@ async function apagarMusica(id) {
         } else {
             alert("Erro ao apagar música!");
         }
+
     } catch (error) {
-        console.log(error);
+        console.error("Erro:", error);
         alert("Erro ao conectar com o backend!");
     }
 }

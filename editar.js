@@ -1,58 +1,79 @@
-const urlBackend = "http://localhost:3001";
 
-const parametros = new URLSearchParams(window.location.search);
-const id = parametros.get("id");
+const urlBackend = "http://localhost:3001"
 
-const formEditar = document.getElementById("formEditar");
+const parametros = new URLSearchParams(window.location.search)
+const id = parametros.get("id")
+
+const inputTitulo = document.getElementById("titulo")
+const inputArtista = document.getElementById("artista")
+const inputGenero = document.getElementById("genero")
+const inputAno = document.getElementById("ano")
+const inputDuracao = document.getElementById("duracao")
+
+const formEditar = document.getElementById("formEditar")
 
 async function buscarMusica() {
+    try {
+        const resposta = await fetch(`${urlBackend}/musica/${id}`)
 
-    const resposta = await fetch(urlBackend);
+        if (!resposta.ok) {
+            throw new Error("Erro ao buscar música!")
+        }
 
-    const musicas = await resposta.json();
+        const musica = await resposta.json()
 
-    const musica = musicas.find((item) => item.id == id);
+        if (!musica) {
+            alert("Música não encontrada!")
+            return
+        }
 
-    if (!musica) {
-        alert("Música não encontrada!");
-        return;
+        inputTitulo.value = musica.titulo
+        inputArtista.value = musica.artista
+        inputGenero.value = musica.genero
+        inputAno.value = musica.ano
+        inputDuracao.value = musica.duracao
+
+    } catch (error) {
+        console.log(error)
+        alert("Erro ao buscar música!")
     }
-
-    document.getElementById("titulo").value = musica.titulo;
-    document.getElementById("artista").value = musica.artista;
-    document.getElementById("genero").value = musica.genero;
-    document.getElementById("ano").value = musica.ano;
-    document.getElementById("duracao").value = musica.duracao;
 }
 
 async function editarMusica(event) {
-
-    event.preventDefault();
+    event.preventDefault()
 
     const musicaAtualizada = {
-        titulo: document.getElementById("titulo").value,
-        artista: document.getElementById("artista").value,
-        genero: document.getElementById("genero").value,
-        ano: Number(document.getElementById("ano").value),
-        duracao: Number(document.getElementById("duracao").value)
-    };
+        titulo: inputTitulo.value,
+        artista: inputArtista.value,
+        genero: inputGenero.value,
+        ano: Number(inputAno.value),
+        duracao: Number(inputDuracao.value)
+    }
 
-    const resposta = await fetch(`${urlBackend}/${id}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(musicaAtualizada)
-    });
+    try {
+        const resposta = await fetch(`${urlBackend}/editar/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(musicaAtualizada)
+        })
 
-    if (resposta.ok) {
-        alert("Música atualizada com sucesso!");
-        window.location.href = "index.html";
-    } else {
-        alert("Erro ao atualizar música!");
+        if (resposta.ok) {
+            alert("Música alterada com sucesso!")
+            window.location.href = "index.html"
+        } else {
+            const erro = await resposta.text()
+            console.log(erro)
+            alert("Erro ao atualizar música!")
+        }
+
+    } catch (error) {
+        console.log(error)
+        alert("Erro ao conectar com o backend!")
     }
 }
 
-formEditar.addEventListener("submit", editarMusica);
+formEditar.addEventListener("submit", editarMusica)
 
-buscarMusica();
+buscarMusica()
